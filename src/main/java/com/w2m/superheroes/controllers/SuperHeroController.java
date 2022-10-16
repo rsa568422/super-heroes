@@ -2,23 +2,18 @@ package com.w2m.superheroes.controllers;
 
 import com.w2m.superheroes.exceptions.W2M_Exception;
 import com.w2m.superheroes.models.SuperHero;
-import com.w2m.superheroes.services.CuentaService;
 import com.w2m.superheroes.services.SuperHeroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/super-heroes")
 public class SuperHeroController {
-
-    @Autowired
-    CuentaService cuentaService;
 
     @Autowired
     private SuperHeroService service;

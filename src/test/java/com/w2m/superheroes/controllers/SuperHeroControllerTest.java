@@ -1,30 +1,22 @@
 package com.w2m.superheroes.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.w2m.superheroes.exceptions.W2M_Exception;
+import com.w2m.superheroes.services.SuperHeroService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import com.w2m.superheroes.Datos;
-import com.w2m.superheroes.models.Cuenta;
-import com.w2m.superheroes.models.TransaccionDto;
-import com.w2m.superheroes.services.CuentaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static com.w2m.superheroes.data.Data.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SuperHeroController.class)
@@ -34,94 +26,66 @@ class SuperHeroControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    private CuentaService cuentaService;
+    private SuperHeroService service;
 
-    ObjectMapper objectMapper;
+    private ObjectMapper mapper;
 
     @BeforeEach
     void setUp() {
-        this.objectMapper = new ObjectMapper();
+        this.mapper = new ObjectMapper();
     }
 
     @Test
-    void testDetalle() throws Exception {
-        when(this.cuentaService.findById(1L)).thenReturn(Datos.crearCuenta001().orElseThrow());
+    void test_findAll() throws Exception {
+        when(this.service.findAll()).thenReturn(SUPER_HEROES());
 
-        this.mvc.perform(get("/api/cuentas/1")
+        this.mvc.perform(get("/super-heroes")
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$.persona").value("Andrés"))
-                .andExpect(jsonPath("$.saldo").value("1000"));
+                .andExpect(jsonPath("$[0].name").value("Spiderman"))
+                .andExpect(jsonPath("$[1].name").value("Superman"))
+                .andExpect(jsonPath("$[2].name").value("Manolito el fuerte"))
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(content().json(this.mapper.writeValueAsString(SUPER_HEROES())));
 
-        verify(this.cuentaService).findById(1L);
+        verify(this.service).findAll();
     }
 
     @Test
-    void testTransferir() throws Exception {
-        TransaccionDto dto = new TransaccionDto();
-        dto.setBancoId(1L);
-        dto.setCuentaOrigenId(1L);
-        dto.setCuentaDestinoId(2L);
-        dto.setMonto(new BigDecimal("100"));
+    void test_findById_id3() throws Exception {
+        when(this.service.findById(argThat(arg -> arg.equals(3L)))).thenReturn(MANOLITO());
 
-        System.out.println(this.objectMapper.writeValueAsString(dto));
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("date", LocalDate.now().toString());
-        response.put("status", "OK");
-        response.put("mensaje", "Transferencia realizada con éxito");
-        response.put("transaccion", dto);
-
-        System.out.println(this.objectMapper.writeValueAsString(response));
-
-        this.mvc.perform(post("/api/cuentas/transferir")
-                .contentType(APPLICATION_JSON)
-                .content(this.objectMapper.writeValueAsString(dto)))
+        this.mvc.perform(get("/super-heroes/3")
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$.date").value(LocalDate.now().toString()))
-                .andExpect(jsonPath("$.mensaje").value("Transferencia realizada con éxito"))
-                .andExpect(jsonPath("$.transaccion.cuentaOrigenId").value(dto.getCuentaOrigenId()))
-                .andExpect(content().json(this.objectMapper.writeValueAsString(response)));
+                .andExpect(jsonPath("$.name").value("Manolito el fuerte"));
+
+        verify(this.service).findById(3L);
     }
 
     @Test
-    void testListar() throws Exception {
-        List<Cuenta> cuentas = Arrays.asList(Datos.crearCuenta001().orElseThrow(), Datos.crearCuenta002().orElseThrow());
-        when(this.cuentaService.findAll()).thenReturn(cuentas);
+    void test_findById_id7() throws Exception {
+        when(this.service.findById(argThat(arg -> Long.valueOf(6L).compareTo(arg) < 0))).thenThrow(new W2M_Exception("MOCK_NOT_FOUND"));
 
-        this.mvc.perform(get("/api/cuentas")
-                .contentType(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].persona").value("Andrés"))
-                .andExpect(jsonPath("$[0].saldo").value("1000"))
-                .andExpect(jsonPath("$[1].persona").value("Roberto"))
-                .andExpect(jsonPath("$[1].saldo").value("2000"))
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(content().json(this.objectMapper.writeValueAsString(cuentas)));
-        verify(this.cuentaService).findAll();
+        this.mvc.perform(get("/super-heroes/7")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+
+        verify(this.service).findById(7L);
     }
 
     @Test
-    void testGuardar() throws Exception {
-        Cuenta cuenta = new Cuenta(null, "Pepe", new BigDecimal("3000"));
-        when(this.cuentaService.save(any())).then(invocation -> {
-            Cuenta c = invocation.getArgument(0);
-            c.setId(3L);
-            return c;
-        });
+    void test_findByPattern() {
+    }
 
-        this.mvc.perform(post("/api/cuentas")
-                .contentType(APPLICATION_JSON)
-                .content(this.objectMapper.writeValueAsString(cuenta)))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(3)))
-                .andExpect(jsonPath("$.persona", is("Pepe")))
-                .andExpect(jsonPath("$.saldo", is(3000)));
-        verify(this.cuentaService).save(any());
+    @Test
+    void test_update() {
+    }
+
+    @Test
+    void test_deleteById() {
     }
 
 }
