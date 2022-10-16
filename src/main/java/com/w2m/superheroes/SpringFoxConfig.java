@@ -15,7 +15,6 @@ public class SpringFoxConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.w2m.superheroes.controllers"))
-                .paths(PathSelectors.ant("/super-heroes/*"))
                 .build();
     }
 

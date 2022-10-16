@@ -27,7 +27,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @Tag("integracion_wc")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class CuentaControllerWebTestClientTests {
+class SuperHeroControllerWebTestClientTests {
 
     @Autowired
     private WebTestClient client;

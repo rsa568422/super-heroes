@@ -28,7 +28,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @Tag("integracion_rt")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class CuentaControllerTestRestTemplateTest {
+class SuperHeroControllerTestRestTemplateTest {
 
     @Autowired
     private TestRestTemplate client;
