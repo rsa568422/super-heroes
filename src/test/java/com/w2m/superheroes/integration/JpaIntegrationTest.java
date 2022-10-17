@@ -1,4 +1,4 @@
-package com.w2m.superheroes;
+package com.w2m.superheroes.integration;
 
 import com.w2m.superheroes.models.SuperHero;
 import com.w2m.superheroes.repositories.SuperHeroRepository;
