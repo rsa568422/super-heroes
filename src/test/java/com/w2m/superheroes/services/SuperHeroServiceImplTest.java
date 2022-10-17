@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.w2m.superheroes.data.Data.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
@@ -43,7 +42,10 @@ class SuperHeroServiceImplTest {
 
         SuperHero actual = this.service.findById(1L);
 
-        assertEquals(SPIDERMAN(), actual);
+        assertAll(
+                () -> assertEquals(SPIDERMAN(), actual),
+                () -> assertEquals(SPIDERMAN().hashCode(), actual.hashCode())
+        );
         verify(this.repository).findById(1L);
     }
 

@@ -17,7 +17,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class ApiExceptionHandler {
 
     @Getter
-    @Setter
     @AllArgsConstructor
     public static class ErrorMessage implements Serializable {
 
