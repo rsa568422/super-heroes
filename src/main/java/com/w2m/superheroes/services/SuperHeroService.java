@@ -12,7 +12,7 @@ public interface SuperHeroService {
 
     List<SuperHero> findByPattern(String pattern);
 
-    SuperHero update(SuperHero superHero);
+    SuperHero save(SuperHero superHero);
 
     void deleteById(Long id);
 

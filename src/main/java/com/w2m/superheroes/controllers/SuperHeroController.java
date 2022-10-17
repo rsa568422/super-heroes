@@ -27,11 +27,7 @@ public class SuperHeroController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         SuperHero superHero;
-        try {
-            superHero = this.service.findById(id);
-        } catch (W2M_Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+        superHero = this.service.findById(id);
         return ResponseEntity.ok(superHero);
     }
 
@@ -42,8 +38,8 @@ public class SuperHeroController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public SuperHero update(@RequestBody SuperHero superHero) {
-        return this.service.update(superHero);
+    public SuperHero save(@RequestBody SuperHero superHero) {
+        return this.service.save(superHero);
     }
 
     @DeleteMapping("/{id}")
