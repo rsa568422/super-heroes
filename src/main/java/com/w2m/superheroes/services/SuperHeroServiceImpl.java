@@ -36,7 +36,7 @@ public class SuperHeroServiceImpl implements SuperHeroService {
 
     @Override
     @Transactional
-    public SuperHero update(SuperHero superHero) {
+    public SuperHero save(SuperHero superHero) {
         return this.repository.save(superHero);
     }
 

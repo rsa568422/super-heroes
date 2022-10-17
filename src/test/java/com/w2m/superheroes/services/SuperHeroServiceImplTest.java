@@ -5,23 +5,23 @@ import org.junit.jupiter.api.Test;
 class SuperHeroServiceImplTest {
 
     @Test
-    void findAll() {
+    void test_findAll() {
     }
 
     @Test
-    void findById() {
+    void test_findById() {
     }
 
     @Test
-    void findByPattern() {
+    void test_findByPattern() {
     }
 
     @Test
-    void update() {
+    void test_save() {
     }
 
     @Test
-    void deleteById() {
+    void test_deleteById() {
     }
 
 }

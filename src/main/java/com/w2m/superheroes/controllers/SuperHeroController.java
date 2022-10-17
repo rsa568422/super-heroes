@@ -42,8 +42,8 @@ public class SuperHeroController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public SuperHero update(@RequestBody SuperHero superHero) {
-        return this.service.update(superHero);
+    public SuperHero save(@RequestBody SuperHero superHero) {
+        return this.service.save(superHero);
     }
 
     @DeleteMapping("/{id}")
