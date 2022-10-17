@@ -27,11 +27,7 @@ public class SuperHeroController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         SuperHero superHero;
-        try {
-            superHero = this.service.findById(id);
-        } catch (W2M_Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+        superHero = this.service.findById(id);
         return ResponseEntity.ok(superHero);
     }
 
